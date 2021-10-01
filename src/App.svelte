@@ -1,43 +1,21 @@
 <script>
 	import ChatCard from "./ChatCard.svelte";
-
-	let chatMsgs = [
-		{
-			username: "Brian",
-			msgText: "Bread and butter, best combo ever",
-			id: "eeeeeee"
-		},
-		{
-			username: "John Wick",
-			msgText: "You killed my dog and stole my car. The least I could do was repay the favor tenfold.",
-			id: "bbbbbbb"
-		},
-		{
-			username: "James Bond",
-			msgText: "The name is Bond. James Bond.",
-			id: "ccccccc"
-		},
-		{
-			username: "Luke Skywalker",
-			msgText: "The force is strong in my family. My father has it. I have it. My sister has it.",
-			id: "ooooooo"
-		}
-	]
 	
-	let cardWidth = 360;
-	
-	let maxChatVisible = 20
 
-	const autoClearChat = (delay) => {
-		setTimeout(() => {
-			if(chatMsgs.length > maxChatVisible) {
+	let chatMsgs = [];
+	let config = {};
+	
+	function autoClearExcessChat(delay, maxVisible) {
+		setInterval(() => {
+			if(chatMsgs.length > maxVisible) {
+				chatMsgs.splice(0, chatMsgs.length - maxVisible);
+				chatMsgs = chatMsgs;
 			}
 		}, delay);
 	}
 	
-	const connectStreamChat = () => {
-		let serverHostname = window.location.hostname;
-		let relaySocket = new WebSocket(`ws://${serverHostname}:8888`);
+	function connectStreamChat(fqdn) {
+		let relaySocket = new WebSocket(fqdn);
 
 		relaySocket.onopen = () => {
 			relaySocket.send("I am the client, can you hear me?");
@@ -46,14 +24,9 @@
 		relaySocket.onmessage = (event) => {
 			try {
 				let responseObj = JSON.parse(event.data);
-				console.log(responseObj);
 
-				const hasProp = (prop) => {
-					prop in responseObj;
-				}
-
-				if(["username", "msgText"].every(hasProp)) {
-					addChatMsg(responseObj);
+				if("username" in responseObj && "msgText" in responseObj) {
+					addChatMsg(responseObj, config.addFromBeginning);
 
 				} else {
 					throw 'Required properties are missing for chatMsg object!';
@@ -75,34 +48,54 @@
 		}
 	}
 	
-	const addChatMsg = (chatMsgObj) => {
+	// Add new chatMsg object to end of chatMsgs
+	function addChatMsg(chatMsgObj, addFromBeginning){
 		chatMsgObj.id = getRandId();
-		chatMsgs = [...chatMsgs, chatMsgs];
+
+		if(addFromBeginning) {
+			chatMsgs.unshift(chatMsgObj);
+			chatMsgs = chatMsgs;
+
+		} else {
+			chatMsgs[chatMsgs.length] = chatMsgObj;
+
+		}
+
 	}
 
-	// Func for loading json array of objects containing keys with color values
-	const loadColorPalettes = () => {
-		return fetch("/color_palettes.json").then((response) => {
-			return response.json();
-		});
+	// Loading JSON config
+	async function loadConfig()  {
+		const response = await fetch("/config.json");
+ 		config = await response.json();
+		return true;
 	}
 	
-	const getRandId = () => {
-		// For identifying unique messages in session
+	// Generate a random id
+	function getRandId() {
 		return Math.random().toString(36).substr(2, 9);
+
 	}
 	
-	connectStreamChat();
+	// Uh, main?
+	function main() {
+		autoClearExcessChat(3000, 30);
+		connectStreamChat(config.streamChatUrl || `ws://${window.location.hostname}:8888`);
+		console.log(config)
+
+	}
+	
+	let loadConfigPromise = loadConfig();
+	loadConfigPromise.then(isConfigLoaded => main());
 	
 	</script>
 
 <div class="container">
-	{#await loadColorPalettes() then colorPalettes}
+	{#await loadConfigPromise then isConfigLoaded}
 		{#if chatMsgs.length === 0}
-			<p>No chat messages are available to display</p>
+			<p>No chat messages are available to display: {chatMsgs}</p>
 		{:else}
-			{#each chatMsgs as chatMsg}
-				<ChatCard {chatMsg} {cardWidth} colorPalettes={colorPalettes}/>
+			{#each chatMsgs as chatMsg (chatMsg.id)}
+				<ChatCard {chatMsg} colorPalettes={config.colorPalettes}/>
 			{/each}
 		{/if}
 	{/await}

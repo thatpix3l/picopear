@@ -1,13 +1,16 @@
 <script>
     import { onMount } from 'svelte';
     
+    // Add feature to get max scroll amount in Element types
     (function(elmProto){
         if ('scrollTopMax' in elmProto) {
             return;
         }
+        
         if ('scrollLeftMax' in elmProto) {
             return;
         }
+
         Object.defineProperties(elmProto, {
             'scrollTopMax': {
                 get: function scrollTopMax() {
@@ -19,45 +22,51 @@
                   return this.scrollWidth - this.clientWidth;
                 }
             }
+
         });
     })(Element.prototype);
     
+    String.prototype.timeInMs = () => {
+        let isMilliseconds = this.indexOf('ms') !== -1;
+
+        if(isMilliseconds) {
+            return parseInt(this.replace('ms', ''));
+
+        } else {
+            return parseInt(parseFloat(this.replace('s', '')) * 1000);
+
+        }
+        
+    }
+    
+    // Add feature to parse string with css time into milliseconds int
+    
+    // Chat message object
 	export let chatMsg; 
     
-    export let isMounted = false;
+    // How long a card is allowed to be visible
+    export let visibilityDurationMs = 5000;
     
-    // Chat card width in pixels
+    // Chat card css width
     export let cardWidth = 350;
     
     // Object of keys of colors
     export let colorPalettes;
 
-    // Default chat color
-    if(!("msgBodyFg" in chatMsg)) { chatMsg.msgBodyFg = "#333"; }
+    // Default chat color if not existing
+    chatMsg.msgBodyFg ||= "#333";
     
     // Randomly pick color palette from array of color palettes
     let colorPalette = colorPalettes[Math.floor(Math.random() * colorPalettes.length)];
     
-    // Default chat vard visibility
-    let isCardVisible = true;
+    // Chat vard visibility
+    export let isCardVisible = true;
     
-    function SmoothHorizontalScrolling(e, time, amount, start) {
-        var eAmt = amount / 100;
-        var curTime = 0;
-        var scrollCounter = 0;
-        while (curTime <= time) {
-            window.setTimeout(SHS_B, curTime, e, scrollCounter, eAmt, start);
-            curTime += time / 100;
-            scrollCounter++;
-        }
-    }
-
-    function SHS_B(e, sc, eAmt, start) {
-        e.scrollLeft = (eAmt * sc) + start;
-    }
+    // Reference to chat card. Updated during onMount
+    let chatCardElem;
     
     // Func to scroll msg body smoothly, infinitely
-    const autoScroll = (elem, delay) => {
+    function autoScroll(elem, delay) {
                 
         // Scroll every something-milliseconds
         setInterval(() => {
@@ -87,16 +96,9 @@
 
     }
     
-    const autoUndisplay = (elem, delay) => {
+    function autoHide(elem, delay) {
         let animDisappearDuration = getComputedStyle(elem).getPropertyValue("--anim--disappear__duration");
-        let isMilliseconds = animDisappearDuration.indexOf('ms') !== -1;
-      
-        if (isMilliseconds) {
-            animDisappearDuration = animDisappearDuration.replace('ms', '');
-        } else {
-            animDisappearDuration = animDisappearDuration.replace('s', '');
-            animDisappearDuration = parseFloat(animDisappearDuration) * 1000;
-        }
+        animDisappearDuration = animDisappearDuration.timeInMs();
   
         setTimeout(() => {
             isCardVisible = false;
@@ -107,24 +109,26 @@
         }, delay + animDisappearDuration);
     }
     
-    let chatCardElem;
 
     // Beginning card lifecycle
     onMount(() => {
-        isMounted = true;
-        
         let msgBodyElem = chatCardElem.querySelector(".messageBody");
 
         let cardHeight = parseInt(window.getComputedStyle(chatCardElem).height);
+        let disappearDurationMs = window.getComputedStyle(chatCardElem).getPropertyValue("--anim--disappear__duration");
+        disappearDurationMs = disappearDurationMs.timeInMs();
+
         chatCardElem.style.setProperty("--card__width", `${cardWidth}px`);
         chatCardElem.style.setProperty("--card__height", `${cardHeight}px`);
+        chatCardElem.style.setProperty("--visibility__duration", `${visibilityDurationMs}ms`);
+        
 
         // Autoscroll
         autoScroll(msgBodyElem, 1000);
 
         // Unrender and remove layout of card after x milliseconds,
         // not including disappearing animation duration
-        autoUndisplay(chatCardElem, 5000);
+        autoHide(chatCardElem, visibilityDurationMs - disappearDurationMs);
     });
     
 </script>
