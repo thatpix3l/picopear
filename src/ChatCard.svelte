@@ -48,8 +48,8 @@
     // Chat message object
 	export let chatMsg; 
     
-    // How long a card is allowed to be visible
-    export let visibilityDurationMs = 5000;
+    // How long a card is allowed to be visible, in milliseconds
+    export let removeAfter = 5000;
     
     // Object of keys of colors
     export let colorPalettes;
@@ -94,11 +94,9 @@
 
     }
     
-    function autoHide(elem, delay) {
-        let animDisappearDuration = getComputedStyle(elem).getPropertyValue("--anim--disappear__duration");
-        animDisappearDuration = toMillisecond(animDisappearDuration);
-  
+    function autoHide(delay) {
         setTimeout(() => {
+            console.log("Hiding card...");
             isCardAllowed = false;
         }, delay);
 
@@ -119,7 +117,8 @@
         // Unrender and remove layout of card after x milliseconds,
         // not including disappearing animation duration
         // This is up to the maintainer of the CSS used to stylize the cards
-        autoHide(chatCardElem, visibilityDurationMs - disappearDurationMs);
+        let disappearDuration = toMillisecond(window.getComputedStyle(chatCardElem).getPropertyValue("--disappear__duration"));
+        autoHide(removeAfter - disappearDuration);
     });
     
 </script>

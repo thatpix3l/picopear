@@ -94,7 +94,7 @@
 			<p>No chat messages are available to display: {chatMsgs}</p>
 		{:else}
 			{#each chatMsgs as chatMsg (chatMsg.id)}
-				<ChatCard {chatMsg} colorPalettes={config.colorPalettes}/>
+				<ChatCard {chatMsg} colorPalettes={config.colorPalettes} removeAfter={config.cards.removeAfter}/>
 			{/each}
 		{/if}
 	{/await}
