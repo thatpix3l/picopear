@@ -107,14 +107,14 @@
 
     // Beginning card lifecycle
     onMount(() => {
+        // Autoscroll ChatCard message text body
         let msgBodyElem = chatCardElem.querySelector(".messageBody");
-        let disappearDurationMs = toMillisecond(window.getComputedStyle(chatCardElem).getPropertyValue("--anim--disappear__duration"));
-
-        chatCardElem.style.setProperty("--visibility__duration", `${visibilityDurationMs}ms`);
-        
-
-        // Autoscroll
         autoScroll(msgBodyElem, 1000);
+
+        // Set a CSS var for computed height when a card is set or implied to have auto
+        // Handy for CSS transitions that try to transition height
+        let computedHeight = parseInt(window.getComputedStyle(chatCardElem).height);
+        document.documentElement.style.setProperty("--card__computed-height", `${computedHeight}px`);
 
         // Unrender and remove layout of card after x milliseconds,
         // not including disappearing animation duration
@@ -123,97 +123,6 @@
     });
     
 </script>
-
-<style>
-    .card {
-        --anim--appear__duration: .4s;
-        --anim--disappear__duration: .4s;
-        --card__width: 350px;
-        --card__height: 500px;
-
-        max-width: var(--card__width);
-        max-height: var(--card__height);
-        margin-bottom: 10px;
-        overflow: hidden;
-    }
-
-    .usernameBody {
-        font-size: .9rem;
-        padding: 2px;
-    }
-    
-    .messageBody {
-        padding: 5px;
-        overflow-x: auto;
-    }
-    
-    .messageBody, ::-webkit-scrollbar {
-        /* Hide scrollbars, but still usable with mouse */
-        -ms-overflow-style: none;  /* IE and Edge */
-        scrollbar-width: none;  /* Firefox */
-    }
-    
-    .messageBody > * {
-        font-size: 1.25rem;
-        white-space: nowrap;
-    }
-    
-    .appear {
-        animation-name: fade-in, swing-up;
-        animation-duration: var(--anim--appear__duration);
-    }
-    
-    .disappear {
-        animation-name: shrink-height, fade-out;
-        animation-duration: var(--anim--disappear__duration);
-        animation-timing-function: ease-out;
-        animation-fill-mode: forwards;
-    }
-    
-    @keyframes swing-up {
-        0% {
-            transform-origin: top left;
-            transform: translateY(20px) rotate(3deg);
-        }
-        
-        50% {
-            transform: translateY(0px);
-        }
-        
-        100% {
-            transform: rotate(0);
-        }
-    }
-    
-    @keyframes fade-in {
-        0% {
-            opacity: 0;
-        }
-
-        100% {
-            opacity: 1;
-        }
-    }
-    
-    @keyframes fade-out {
-        0% {
-            opacity: 1;
-        }
-
-        100% {
-            opacity: 0;
-        }
-    }
-    
-    @keyframes shrink-height {
-        100% {
-            max-height: 0px;
-            margin: 0;
-            padding: 0;
-        }
-    }
-    
-</style>
 
 <div id="{chatMsg.id}" class="card {isCardAllowed === true ? 'appear' : 'disappear'}" bind:this={chatCardElem}>
     <div class="usernameBody" style="background: {colorPalette.usernameBg}">

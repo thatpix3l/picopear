@@ -16,3 +16,95 @@ body {
 	margin: 0;
 	padding: 0;
 }
+
+:root {
+    --appear__duration: .4s;
+    --disappear__duration: .4s;
+    --card__width: 350px;
+}
+
+.card {
+    max-width: var(--card__width);
+    max-height: var(--card__computed-height);
+    margin-bottom: 10px;
+    overflow: hidden;
+    
+    transition-property: max-height, margin;
+    transition-duration: var(--disappear__duration);
+    transition-timing-function: ease-out;
+}
+
+.usernameBody {
+    font-size: .9rem;
+    padding: 2px;
+}
+
+.messageBody {
+    padding: 5px;
+    overflow-x: auto;
+}
+
+.messageBody, ::-webkit-scrollbar {
+    /* Hide scrollbars, but still usable with mouse */
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+}
+
+.messageBody > * {
+    font-size: 1.25rem;
+    white-space: nowrap;
+}
+
+.appear {
+    animation-name: fade-in, swing-up;
+    animation-duration: var(--appear__duration);
+}
+
+.disappear {
+    animation-name: shrink-height;
+    animation-duration: var(--disappear__duration);
+    animation-fill-mode: forwards;
+}
+
+@keyframes swing-up {
+    0% {
+        transform-origin: top left;
+        transform: translateY(20px) rotate(3deg);
+    }
+    
+    50% {
+        transform: translateY(0px);
+    }
+    
+    100% {
+        transform: rotate(0);
+    }
+}
+
+@keyframes fade-in {
+    0% {
+        opacity: 0;
+    }
+
+    100% {
+        opacity: 1;
+    }
+}
+
+@keyframes fade-out {
+    0% {
+        opacity: 1;
+    }
+
+    100% {
+        opacity: 0;
+    }
+}
+
+@keyframes shrink-height {
+    100% {
+        max-height: 0;
+        margin: 0;
+        padding: 0;
+    }
+}
