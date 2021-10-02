@@ -15,7 +15,7 @@
 	}
 	
 	function connectStreamChat(websocketServerUrl) {
-			let relaySocket = new WebSocket(websocketServerUrl);
+		let relaySocket = new WebSocket(websocketServerUrl);
 
 		relaySocket.onopen = () => {
 			relaySocket.send("I am the client, can you hear me?");
