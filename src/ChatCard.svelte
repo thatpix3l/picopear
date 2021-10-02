@@ -57,8 +57,8 @@
     // Object of keys of colors
     export let colorPalettes;
 
-    // Default chat color if not existing
-    chatMsg.msgBodyFg ||= "#333";
+    // If card should be visible or not
+    let isCardAllowed = true;
     
     // Randomly pick color palette from array of color palettes
     let colorPalette = colorPalettes[Math.floor(Math.random() * colorPalettes.length)];
@@ -219,7 +219,7 @@
     
 </style>
 
-<div id="{chatMsg.id}" class="card {isCardVisible === true ? 'appear' : 'disappear'}" bind:this={chatCardElem}>
+<div id="{chatMsg.id}" class="card {isCardAllowed === true ? 'appear' : 'disappear'}" bind:this={chatCardElem}>
     <div class="usernameBody" style="background: {colorPalette.usernameBg}">
         <p style="color: {colorPalette.usernameFg}"><b>{chatMsg.username}</b></p>
     </div>
