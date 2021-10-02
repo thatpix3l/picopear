@@ -32,13 +32,13 @@
             throw "Does not end with 's' or 'ms'!";
         }
         let isMilliseconds = string_with_time.indexOf('ms') !== -1;
-
+                                                                                 
         if(isMilliseconds) {
             string_with_time = parseInt(string_with_time.replace('ms', ''));
-
+                                                                                 
         } else {
             string_with_time = parseInt(parseFloat(string_with_time.replace('s', '')) * 1000);
-
+                                                                                 
         }
         
         return string_with_time;
@@ -56,12 +56,9 @@
 
     // If card should be visible or not
     let isCardAllowed = true;
-    
+
     // Randomly pick color palette from array of color palettes
     let colorPalette = colorPalettes[Math.floor(Math.random() * colorPalettes.length)];
-    
-    // Chat vard visibility
-    export let isCardVisible = true;
     
     // Reference to chat card. Updated during onMount
     let chatCardElem;
