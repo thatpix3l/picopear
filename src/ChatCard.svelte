@@ -1,5 +1,5 @@
 <script>
-    import { onMount } from 'svelte';
+    import { onDestroy, onMount } from 'svelte';
     
     // Add feature to get max scroll amount in Element types
     (function(elmProto){
@@ -45,6 +45,12 @@
 
     }
     
+    // Chat messages array
+    export let chatMsgArr;
+    
+    // Index of where chatMsg is in array
+    export let chatMsgIndex;
+    
     // Chat message object
 	export let chatMsg; 
     
@@ -55,7 +61,7 @@
     export let colorPalettes;
 
     // If card should be visible or not
-    let isCardAllowed = true;
+    let chatCardVisible = true;
 
     // Randomly pick color palette from array of color palettes
     let colorPalette = colorPalettes[Math.floor(Math.random() * colorPalettes.length)];
@@ -94,16 +100,21 @@
 
     }
     
-    function autoHide(delay) {
+    function autoRemove(removeAfterTime, hideDuration) {
         setTimeout(() => {
-            console.log("Hiding card...");
-            isCardAllowed = false;
-        }, delay);
+            chatCardVisible = false;
+        }, removeAfterTime - hideDuration);
+        
+        setTimeout(() => {
+            let chatMsgArr_copy = [...chatMsgArr];
+            chatMsgArr_copy.splice(chatMsgIndex, 1);
+            chatMsgArr = [...chatMsgArr_copy];
+        }, removeAfterTime);
 
     }
     
 
-    // Beginning card lifecycle
+    // Beginning chat card lifecycle
     onMount(() => {
         // Autoscroll ChatCard message text body
         let msgBodyElem = chatCardElem.querySelector(".messageBody");
@@ -118,12 +129,12 @@
         // not including disappearing animation duration
         // This is up to the maintainer of the CSS used to stylize the cards
         let disappearDuration = toMillisecond(window.getComputedStyle(chatCardElem).getPropertyValue("--disappear__duration"));
-        autoHide(removeAfter - disappearDuration);
+        autoRemove(removeAfter, disappearDuration);
     });
     
 </script>
 
-<div id="{chatMsg.id}" class="card {isCardAllowed === true ? 'appear' : 'disappear'}" bind:this={chatCardElem}>
+<div id="{chatMsg.id}" class="card {chatCardVisible === true ? 'appear' : 'disappear'}" bind:this={chatCardElem}>
     <div class="usernameBody" style="background: {colorPalette.usernameBg}">
         <p style="color: {colorPalette.usernameFg}"><b>{chatMsg.username}</b></p>
     </div>
