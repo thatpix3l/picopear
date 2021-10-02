@@ -1,17 +1,29 @@
 <script>
 	import ChatCard from "./ChatCard.svelte";
-	
 
-	let chatMsgs = [];
 	let config = {};
-	
-	function autoClearExcessChat(delay, maxVisible) {
-		setInterval(() => {
-			if(chatMsgs.length > maxVisible) {
-				chatMsgs.splice(0, chatMsgs.length - maxVisible);
-				chatMsgs = chatMsgs;
+	let chatMsgs = [];
+
+	function removeExcessChat(
+		maxVisible = config.cards.max || false,
+		isAddToTop = config.cards.addToTop || true
+	) {
+		if(chatMsgs.length > maxVisible) {
+			if(isAddToTop) {
+				chatMsgs = chatMsgs.slice(0, maxVisible - 1);
+
+			} else {
+				chatMsgs = chatMsgs.slice(-maxVisible);
+				
 			}
-		}, delay);
+
+		}
+	}
+	
+	function updateChat(chatMsgObj, isAddToTop, maxVisible) {
+		addChatMsg(chatMsgObj, isAddToTop);
+		removeExcessChat(maxVisible, isAddToTop);
+
 	}
 	
 	function connectStreamChat(websocketServerUrl) {
@@ -25,13 +37,15 @@
 			try {
 				let responseObj = JSON.parse(event.data);
 
-				if("username" in responseObj && "msgText" in responseObj) {
-					addChatMsg(responseObj, config.cards.addToTop || false);
-
-				} else {
+				if(!("username" in responseObj && "msgText" in responseObj)) {
 					throw 'Required properties are missing for chatMsg object!';
-
 				}
+				
+				updateChat(
+					responseObj,
+					config.cards.addToTop || false,
+					config.cards.max || 20
+				);
 
 			} catch(e) {
 				console.log(e);
@@ -46,18 +60,18 @@
 				connectStreamChat(websocketServerUrl);
 			}, 1000);
 		}
+
 	}
 	
 	// Add new chatMsg object to end of chatMsgs
-	function addChatMsg(chatMsgObj, addToTop){
+	function addChatMsg(chatMsgObj, isAddToTop){
 		chatMsgObj.id = getRandId();
 
-		if(addToTop) {
-			chatMsgs.unshift(chatMsgObj);
-			chatMsgs = chatMsgs;
+		if(isAddToTop) {
+			chatMsgs = [chatMsgObj].concat(chatMsgs);
 
 		} else {
-			chatMsgs[chatMsgs.length] = chatMsgObj;
+			chatMsgs = chatMsgs.concat([chatMsgObj]);
 
 		}
 
@@ -78,11 +92,11 @@
 	
 	// Uh, main?
 	function main() {
-		autoClearExcessChat(config.cards.removeAfter || 3000, config.cards.max || 30);
 		connectStreamChat(config.serverWebSocketUrl || `ws://${window.location.hostname}:8888`);
 
 	}
 	
+	// Load config.json, run main when finished
 	let loadConfigPromise = loadConfig();
 	loadConfigPromise.then(isConfigLoaded => main());
 	
