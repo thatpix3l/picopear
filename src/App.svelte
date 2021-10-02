@@ -78,9 +78,9 @@
 	
 	// Uh, main?
 	function main() {
-		autoClearExcessChat(3000, 30);
-		connectStreamChat(config.streamChatUrl || `ws://${window.location.hostname}:8888`);
-		console.log(config)
+		autoClearExcessChat(config.cards.removeAfter || 3000, config.cards.max || 30);
+		connectStreamChat(config.serverWebSocketUrl || `ws://${window.location.hostname}:8888`);
+		console.log(config);
 
 	}
 	
