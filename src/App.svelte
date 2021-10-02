@@ -43,7 +43,7 @@
 		relaySocket.onclose = (event) => {
 			console.log("Socket closed. Reconnect will be attempted in 1 second.", event.reason);
 			setTimeout(() => {
-				connectStreamChat();
+				connectStreamChat(websocketServerUrl);
 			}, 1000);
 		}
 	}
