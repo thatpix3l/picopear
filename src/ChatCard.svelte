@@ -26,20 +26,24 @@
         });
     })(Element.prototype);
     
-    String.prototype.timeInMs = () => {
-        let isMilliseconds = this.indexOf('ms') !== -1;
+    // Add feature to parse a String and return milliseconds as an int
+    function toMillisecond(string_with_time) {
+        if(!(string_with_time.endsWith("s") || string_with_time.endsWith("ms"))) {
+            throw "Does not end with 's' or 'ms'!";
+        }
+        let isMilliseconds = string_with_time.indexOf('ms') !== -1;
 
         if(isMilliseconds) {
-            return parseInt(this.replace('ms', ''));
+            string_with_time = parseInt(string_with_time.replace('ms', ''));
 
         } else {
-            return parseInt(parseFloat(this.replace('s', '')) * 1000);
+            string_with_time = parseInt(parseFloat(string_with_time.replace('s', '')) * 1000);
 
         }
         
+        return string_with_time;
+
     }
-    
-    // Add feature to parse string with css time into milliseconds int
     
     // Chat message object
 	export let chatMsg; 
@@ -98,28 +102,20 @@
     
     function autoHide(elem, delay) {
         let animDisappearDuration = getComputedStyle(elem).getPropertyValue("--anim--disappear__duration");
-        animDisappearDuration = animDisappearDuration.timeInMs();
+        animDisappearDuration = toMillisecond(animDisappearDuration);
   
         setTimeout(() => {
-            isCardVisible = false;
+            isCardAllowed = false;
         }, delay);
 
-        setTimeout(() => {
-            elem.style.display = "none";
-        }, delay + animDisappearDuration);
     }
     
 
     // Beginning card lifecycle
     onMount(() => {
         let msgBodyElem = chatCardElem.querySelector(".messageBody");
+        let disappearDurationMs = toMillisecond(window.getComputedStyle(chatCardElem).getPropertyValue("--anim--disappear__duration"));
 
-        let cardHeight = parseInt(window.getComputedStyle(chatCardElem).height);
-        let disappearDurationMs = window.getComputedStyle(chatCardElem).getPropertyValue("--anim--disappear__duration");
-        disappearDurationMs = disappearDurationMs.timeInMs();
-
-        chatCardElem.style.setProperty("--card__width", `${cardWidth}px`);
-        chatCardElem.style.setProperty("--card__height", `${cardHeight}px`);
         chatCardElem.style.setProperty("--visibility__duration", `${visibilityDurationMs}ms`);
         
 
