@@ -51,9 +51,6 @@
     // How long a card is allowed to be visible
     export let visibilityDurationMs = 5000;
     
-    // Chat card css width
-    export let cardWidth = 350;
-    
     // Object of keys of colors
     export let colorPalettes;
 
@@ -134,6 +131,8 @@
     .card {
         --anim--appear__duration: .4s;
         --anim--disappear__duration: .4s;
+        --card__width: 350px;
+        --card__height: 500px;
 
         max-width: var(--card__width);
         max-height: var(--card__height);
