@@ -124,6 +124,7 @@
 
         // Unrender and remove layout of card after x milliseconds,
         // not including disappearing animation duration
+        // This is up to the maintainer of the CSS used to stylize the cards
         autoHide(chatCardElem, visibilityDurationMs - disappearDurationMs);
     });
     
