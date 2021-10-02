@@ -26,7 +26,7 @@
 				let responseObj = JSON.parse(event.data);
 
 				if("username" in responseObj && "msgText" in responseObj) {
-					addChatMsg(responseObj, config.addFromBeginning);
+					addChatMsg(responseObj, config.cards.addToTop || false);
 
 				} else {
 					throw 'Required properties are missing for chatMsg object!';
@@ -49,10 +49,10 @@
 	}
 	
 	// Add new chatMsg object to end of chatMsgs
-	function addChatMsg(chatMsgObj, addFromBeginning){
+	function addChatMsg(chatMsgObj, addToTop){
 		chatMsgObj.id = getRandId();
 
-		if(addFromBeginning) {
+		if(addToTop) {
 			chatMsgs.unshift(chatMsgObj);
 			chatMsgs = chatMsgs;
 
