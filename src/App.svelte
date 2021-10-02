@@ -88,7 +88,7 @@
 	
 	</script>
 
-<div class="container">
+<div class="container" style="height: 100%; width: 100%">
 	{#await loadConfigPromise then isConfigLoaded}
 		{#if chatMsgs.length === 0}
 			<p>No chat messages are available to display: {chatMsgs}</p>
