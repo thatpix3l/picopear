@@ -29,19 +29,23 @@ body {
     margin-bottom: 10px;
     overflow: hidden;
     
-    transition-property: max-height, margin;
-    transition-duration: var(--disappear__duration);
-    transition-timing-function: ease-out;
 }
 
 .usernameBody {
     font-size: .9rem;
+    font-weight: bold;
     padding: 2px;
+    background: #57B1FF;
+    color: #003C70;
+    
 }
 
 .messageBody {
+    font-size: 1rem;
     padding: 5px;
     overflow-x: auto;
+    background: #F0F8FF;
+    color: #333;
 }
 
 .messageBody, ::-webkit-scrollbar {
@@ -69,7 +73,7 @@ body {
 @keyframes swing-up {
     0% {
         transform-origin: top left;
-        transform: translateY(20px) rotate(3deg);
+        transform: translateY(20px) rotate(6deg);
     }
     
     50% {

@@ -54,15 +54,9 @@
     // How long a card is allowed to be visible, in milliseconds
     export let removeAfter = 5000;
     
-    // Object of keys of colors
-    export let colorPalettes;
-
     // All chat cards start off as visible
     let chatCardVisible = true;
 
-    // Randomly pick color palette from array of color palettes
-    let colorPalette = colorPalettes[Math.floor(Math.random() * colorPalettes.length)];
-    
     // Reference to chat card. Updated during onMount
     let chatCardElem;
     
@@ -132,10 +126,10 @@
 </script>
 
 <div id="{chatMsgArr[0]}" class="card {chatCardVisible === true ? 'appear' : 'disappear'}" bind:this={chatCardElem}>
-    <div class="usernameBody" style="background: {colorPalette.usernameBg}">
-        <p style="color: {colorPalette.usernameFg}"><b>{chatMsgArr[1].username}</b></p>
+    <div class="usernameBody">
+        <p>{chatMsgArr[1].username}</p>
     </div>
-    <div class="messageBody" style="background: {colorPalette.msgBodyBg}">
-        <p style="color: {colorPalette.msgBodyFg}">{chatMsgArr[1].msgText}</p>
+    <div class="messageBody">
+        <p>{chatMsgArr[1].msgText}</p>
     </div>
 </div>

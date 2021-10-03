@@ -4,10 +4,7 @@
 	let config = {};
 	let chatMsgMap = new Map();
 
-	function removeExcessChat(
-		maxVisible = config.cards.max || false,
-		isAddToTop = config.cards.addToTop || true
-	) {
+	function removeExcessChat( maxVisible, isAddToTop) {
 		if(chatMsgMap.size > maxVisible) {
 			if(isAddToTop) {
 				chatMsgMap.delete([...chatMsgMap][chatMsgMap.size - 1][0]);
@@ -112,7 +109,6 @@
 				<ChatCard
 					bind:chatMsgMap={chatMsgMap}
 					{chatMsgArr}
-					colorPalettes={config.colorPalettes}
 					removeAfter={config.cards.removeAfter}
 				/>
 			{/each}
