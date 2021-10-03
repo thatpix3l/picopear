@@ -1,5 +1,5 @@
 <script>
-    import { onDestroy, onMount } from 'svelte';
+    import { onMount } from 'svelte';
     
     // Add feature to get max scroll amount in Element types
     (function(elmProto){
@@ -46,13 +46,10 @@
     }
     
     // Chat messages array
-    export let chatMsgArr;
+    export let chatMsgMap;
     
-    // Index of where chatMsg is in array
-    export let chatMsgIndex;
-    
-    // Chat message object
-	export let chatMsg; 
+    // Array containing id and a chatMsg object
+	export let chatMsgArr; 
     
     // How long a card is allowed to be visible, in milliseconds
     export let removeAfter = 5000;
@@ -60,7 +57,7 @@
     // Object of keys of colors
     export let colorPalettes;
 
-    // If card should be visible or not
+    // All chat cards start off as visible
     let chatCardVisible = true;
 
     // Randomly pick color palette from array of color palettes
@@ -103,12 +100,12 @@
     function autoRemove(removeAfterTime, hideDuration) {
         setTimeout(() => {
             chatCardVisible = false;
+
         }, removeAfterTime - hideDuration);
         
         setTimeout(() => {
-            let chatMsgArr_copy = [...chatMsgArr];
-            chatMsgArr_copy.splice(chatMsgIndex, 1);
-            chatMsgArr = [...chatMsgArr_copy];
+            chatMsgMap.delete(chatMsgArr[0]);
+
         }, removeAfterTime);
 
     }
@@ -134,11 +131,11 @@
     
 </script>
 
-<div id="{chatMsg.id}" class="card {chatCardVisible === true ? 'appear' : 'disappear'}" bind:this={chatCardElem}>
+<div id="{chatMsgArr[0]}" class="card {chatCardVisible === true ? 'appear' : 'disappear'}" bind:this={chatCardElem}>
     <div class="usernameBody" style="background: {colorPalette.usernameBg}">
-        <p style="color: {colorPalette.usernameFg}"><b>{chatMsg.username}</b></p>
+        <p style="color: {colorPalette.usernameFg}"><b>{chatMsgArr[1].username}</b></p>
     </div>
     <div class="messageBody" style="background: {colorPalette.msgBodyBg}">
-        <p style="color: {colorPalette.msgBodyFg}">{chatMsg.msgText}</p>
+        <p style="color: {colorPalette.msgBodyFg}">{chatMsgArr[1].msgText}</p>
     </div>
 </div>

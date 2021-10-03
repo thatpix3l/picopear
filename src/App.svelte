@@ -2,18 +2,19 @@
 	import ChatCard from "./ChatCard.svelte";
 
 	let config = {};
-	let chatMsgArr = [];
+	let chatMsgMap = new Map();
 
 	function removeExcessChat(
 		maxVisible = config.cards.max || false,
 		isAddToTop = config.cards.addToTop || true
 	) {
-		if(chatMsgArr.length > maxVisible) {
+		if(chatMsgMap.size > maxVisible) {
 			if(isAddToTop) {
-				chatMsgArr = chatMsgArr.slice(0, maxVisible - 1);
+				chatMsgMap.delete([...chatMsgMap][chatMsgMap.size - 1][0]);
 
+				
 			} else {
-				chatMsgArr = chatMsgArr.slice(-maxVisible);
+				chatMsgMap.delete([...chatMsgMap][0][0]);
 				
 			}
 
@@ -65,13 +66,13 @@
 	
 	// Add new chatMsg object to chatMsgs
 	function addChatMsg(chatMsgObj, isAddToTop){
-		chatMsgObj.id = getRandId();
+		let id = getRandId();
 
 		if(isAddToTop) {
-			chatMsgArr = [chatMsgObj].concat(chatMsgArr);
+			chatMsgMap = new Map([[id, chatMsgObj], ...chatMsgMap]);
 
 		} else {
-			chatMsgArr = chatMsgArr.concat([chatMsgObj]);
+			chatMsgMap = new Map([...chatMsgMap, [id, chatMsgObj]]);
 
 		}
 
@@ -104,14 +105,13 @@
 
 <div class="container" style="height: 100%; width: 100%">
 	{#await loadConfigPromise then isConfigLoaded}
-		{#if chatMsgArr.length === 0}
-			<p>No chat messages are available to display: {chatMsgArr}</p>
+		{#if chatMsgMap.size === 0}
+			<p>No chat messages are available to display</p>
 		{:else}
-			{#each chatMsgArr as chatMsg, chatMsgIndex (chatMsg.id)}
+			{#each [...chatMsgMap] as chatMsgArr (chatMsgArr[0])}
 				<ChatCard
-					bind:chatMsgArr={chatMsgArr}
-					{chatMsgIndex}
-					{chatMsg}
+					bind:chatMsgMap={chatMsgMap}
+					{chatMsgArr}
 					colorPalettes={config.colorPalettes}
 					removeAfter={config.cards.removeAfter}
 				/>
