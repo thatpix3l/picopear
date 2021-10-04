@@ -134,6 +134,6 @@
         <p>{chatMsgObj.username}</p>
     </div>
     <div class="messageBody">
-        <p>{chatMsgArr[1].msgText}</p>
+        <p>{chatMsgObj.msgText}</p>
     </div>
 </div>
