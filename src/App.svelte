@@ -102,16 +102,14 @@
 
 <div class="container" style="height: 100%; width: 100%">
 	{#await loadConfigPromise then isConfigLoaded}
-		{#if chatMsgMap.size === 0}
-			<p>No chat messages are available to display</p>
+		{#each [...chatMsgMap] as chatMsgArr (chatMsgArr[0])}
+			<ChatCard
+				bind:chatMsgMap={chatMsgMap}
+				{chatMsgArr}
+				removeAfter={config.cards.removeAfter}
+			/>
 		{:else}
-			{#each [...chatMsgMap] as chatMsgArr (chatMsgArr[0])}
-				<ChatCard
-					bind:chatMsgMap={chatMsgMap}
-					{chatMsgArr}
-					removeAfter={config.cards.removeAfter}
-				/>
-			{/each}
-		{/if}
+			<p>No chat messages are available to display</p>
+		{/each}
 	{/await}
 </div>
