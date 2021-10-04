@@ -54,6 +54,10 @@
     // How long a card is allowed to be visible, in milliseconds
     export let removeAfter = 5000;
     
+    // Destructure chatMsgArr into separate parts
+    let chatMsgId = chatMsgArr[0]
+    let chatMsgObj = chatMsgArr[1];
+    
     // All chat cards start off as visible
     let chatCardVisible = true;
 
@@ -98,7 +102,7 @@
         }, removeAfterTime - hideDuration);
         
         setTimeout(() => {
-            chatMsgMap.delete(chatMsgArr[0]);
+            chatMsgMap.delete(chatMsgId);
 
         }, removeAfterTime);
 
@@ -125,9 +129,9 @@
     
 </script>
 
-<div id="{chatMsgArr[0]}" class="card {chatCardVisible === true ? 'appear' : 'disappear'}" bind:this={chatCardElem}>
+<div id="{chatMsgId}" class="card {chatCardVisible === true ? 'appear' : 'disappear'}" bind:this={chatCardElem}>
     <div class="usernameBody">
-        <p>{chatMsgArr[1].username}</p>
+        <p>{chatMsgObj.username}</p>
     </div>
     <div class="messageBody">
         <p>{chatMsgArr[1].msgText}</p>
