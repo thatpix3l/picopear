@@ -45,17 +45,18 @@
 
     }
     
-    // Chat messages array
-    export let chatMsgMap;
-    
-    // Array containing id and a chatMsg object
+    // Chat message array containing id and chatMsgObj
 	export let chatMsgArr; 
     
     // How long a card is allowed to be visible, in milliseconds
     export let removeAfter = 5000;
     
-    // Destructure chatMsgArr into separate parts
-    let chatMsgId = chatMsgArr[0]
+    // This component's hiddenChatId is bound to parent hiddenChatId
+    // and updated it when this component is hidden
+    export let hiddenChatId;
+    
+    // Destructure chat message array
+    let chatMsgId = chatMsgArr[0];
     let chatMsgObj = chatMsgArr[1];
     
     // All chat cards start off as visible
@@ -95,16 +96,13 @@
 
     }
     
-    function autoRemove(removeAfterTime, hideDuration) {
+    function autoHide(removeDuration, hideDuration) {
         setTimeout(() => {
             chatCardVisible = false;
 
-        }, removeAfterTime - hideDuration);
+        }, removeDuration - hideDuration);
         
-        setTimeout(() => {
-            chatMsgMap.delete(chatMsgId);
-
-        }, removeAfterTime);
+        setTimeout(() => {hiddenChatId = chatMsgId}, removeDuration);
 
     }
     
@@ -124,7 +122,7 @@
         // not including disappearing animation duration
         // This is up to the maintainer of the CSS used to stylize the cards
         let disappearDuration = toMillisecond(window.getComputedStyle(chatCardElem).getPropertyValue("--disappear__duration"));
-        autoRemove(removeAfter, disappearDuration);
+        autoHide(removeAfter, disappearDuration);
     });
     
 </script>

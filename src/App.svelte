@@ -2,25 +2,32 @@
 	import ChatCard from "./ChatCard.svelte";
 
 	let config = {};
-	let chatMsgMap = new Map();
+	let chatMessages = new Map();
+	
+	let hiddenChatId;
+	$: {
+		chatMessages.delete(hiddenChatId);
+		chatMessages = chatMessages;
 
-	function removeExcessChat( maxVisible, isAddToTop) {
-		if(chatMsgMap.size > maxVisible) {
-			if(isAddToTop) {
-				chatMsgMap.delete([...chatMsgMap][chatMsgMap.size - 1][0]);
-
-				
-			} else {
-				chatMsgMap.delete([...chatMsgMap][0][0]);
-				
-			}
-
-		}
 	}
 	
-	function updateChat(chatMsgObj, isAddToTop, maxVisible) {
-		addChatMsg(chatMsgObj, isAddToTop);
-		removeExcessChat(maxVisible, isAddToTop);
+	function removeOldestChat() {
+		chatMessages.delete([...chatMessages][0][0]);
+		
+	}
+
+	function removeExcessChat(maxVisible) {
+		if(chatMessages.size >= maxVisible) {
+			removeOldestChat();
+			
+		}
+
+	}
+	
+	function updateChat(chatMsgObj, addToTop, maxVisible) {
+		removeExcessChat(maxVisible);
+		addChatMsg(chatMsgObj, addToTop);
+		chatMessages = chatMessages;
 
 	}
 	
@@ -62,16 +69,8 @@
 	}
 	
 	// Add new chatMsg object to chatMsgs
-	function addChatMsg(chatMsgObj, isAddToTop){
-		let id = getRandId();
-
-		if(isAddToTop) {
-			chatMsgMap = new Map([[id, chatMsgObj], ...chatMsgMap]);
-
-		} else {
-			chatMsgMap = new Map([...chatMsgMap, [id, chatMsgObj]]);
-
-		}
+	function addChatMsg(chatMsgObj) {
+		chatMessages.set(getRandId(), chatMsgObj);
 
 	}
 
@@ -82,7 +81,7 @@
 		return true;
 	}
 	
-	// Generate a random id
+	// Generate a random id string
 	function getRandId() {
 		return Math.random().toString(36).substr(2, 9);
 
@@ -102,14 +101,15 @@
 
 <div class="container" style="height: 100%; width: 100%">
 	{#await loadConfigPromise then isConfigLoaded}
-		{#each [...chatMsgMap] as chatMsgArr (chatMsgArr[0])}
+		{#each (config.cards.addToTop ? [...chatMessages].reverse() : [...chatMessages]) as chatMsgArr (chatMsgArr[0])}
 			<ChatCard
-				bind:chatMsgMap={chatMsgMap}
 				{chatMsgArr}
+				bind:hiddenChatId={hiddenChatId}
 				removeAfter={config.cards.removeAfter}
 			/>
 		{:else}
 			<p>No chat messages are available to display</p>
 		{/each}
+
 	{/await}
 </div>
