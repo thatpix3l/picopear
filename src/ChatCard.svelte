@@ -28,9 +28,11 @@
     
     // Add feature to parse a String and return milliseconds as an int
     function toMillisecond(string_with_time) {
+
         if(!(string_with_time.endsWith("s") || string_with_time.endsWith("ms"))) {
             throw "Does not end with 's' or 'ms'!";
         }
+
         let isMilliseconds = string_with_time.indexOf('ms') !== -1;
                                                                                  
         if(isMilliseconds) {
@@ -53,7 +55,7 @@
     
     // This component's hiddenChatId is bound to parent hiddenChatId
     // and updated it when this component is hidden
-    export let hiddenChatId;
+    export let hiddenChatId = "";
     
     // Destructure chat message array
     let chatMsgId = chatMsgArr[0];
@@ -97,12 +99,9 @@
     }
     
     function autoHide(removeDuration, hideDuration) {
-        setTimeout(() => {
-            chatCardVisible = false;
-
-        }, removeDuration - hideDuration);
+        setTimeout(() => { chatCardVisible = false }, removeDuration - hideDuration);
         
-        setTimeout(() => {hiddenChatId = chatMsgId}, removeDuration);
+        setTimeout(() => { hiddenChatId = chatMsgId }, removeDuration);
 
     }
     

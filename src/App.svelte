@@ -76,7 +76,7 @@
 
 	// Loading JSON config
 	async function loadConfig()  {
-		const response = await fetch("/config.json");
+		const response = await fetch("config.json");
  		config = await response.json();
 		return true;
 	}
