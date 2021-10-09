@@ -1,5 +1,6 @@
 frontend/node_modules/
 frontend/public/build/
 frontend/public/config.json
+backend/src/public
 
 .DS_Store
