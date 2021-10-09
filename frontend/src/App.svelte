@@ -89,7 +89,9 @@
 	
 	// Uh, main?
 	function main() {
-		connectStreamChat(config.serverWebSocketUrl || `ws://${window.location.hostname}:8888`);
+		let wsHostname = window.location.hostname
+		let wsPort = window.location.port || 80;
+		connectStreamChat(config.serverWebSocketUrl || `ws://${wsHostname}:${wsPort}/ws`);
 
 	}
 	
