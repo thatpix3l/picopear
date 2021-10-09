@@ -7,7 +7,7 @@ import (
 	"net/http"
 )
 
-//go:embed public/*
+//go:embed public
 var publicFolderFS embed.FS
 
 func wsEndpoint(w http.ResponseWriter, r *http.Request) {
