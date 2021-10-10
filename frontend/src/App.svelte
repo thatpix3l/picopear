@@ -31,15 +31,12 @@
 
 	}
 	
-	function connectStreamChat(websocketServerUrl) {
-		let relaySocket = new WebSocket(websocketServerUrl);
+	function connectStreamChat() {
+		let mergedChatSrc = new EventSource("mergedchat");
 
-		relaySocket.onopen = () => {
-			relaySocket.send("I am the client, can you hear me?");
-		}
-		
-		relaySocket.onmessage = (event) => {
+		mergedChatSrc.onmessage = (event) => {
 			try {
+				console.log(event.data);
 				let responseObj = JSON.parse(event.data);
 
 				if(!("username" in responseObj && "msgText" in responseObj)) {
@@ -57,13 +54,6 @@
 
 			}
 			
-		}
-
-		relaySocket.onclose = (event) => {
-			console.log("Socket closed. Reconnect will be attempted in 1 second.", event.reason);
-			setTimeout(() => {
-				connectStreamChat(websocketServerUrl);
-			}, 1000);
 		}
 
 	}
@@ -89,9 +79,7 @@
 	
 	// Uh, main?
 	function main() {
-		let wsHostname = window.location.hostname
-		let wsPort = window.location.port || 80;
-		connectStreamChat(config.serverWebSocketUrl || `ws://${wsHostname}:${wsPort}/ws`);
+		connectStreamChat();
 
 	}
 	
