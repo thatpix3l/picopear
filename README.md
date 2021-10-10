@@ -1,17 +1,17 @@
-# PicoPlum
+# PicoPear
 
-Fresh and tiny tool for aggregating livestream chats into a browser source
+🍐Fresh, tiny tool for merging your livestream chats into a single browser source.
 
 ## Why?
 
-Existing services (notably [Restream's chat](https://restream.io/chat)) are proprietary, cannot be self-hosted and come with the anxiety of wondering if they will someday start charging for their services.
+Existing services (notably [Restream's chat](https://restream.io/chat)) are proprietary and cannot be self-hosted.
 
-If I had to give another reason, it's mostly because I can.
+If you're looking for another reason: because I can.
 
 ## How?
 
-Run this program and use localhost:4554 as a browser source, run another program that pulls livestream chat from sources like Twitch or Youtube and POSTS to localhost:4554/relay
+Run this cli program and use localhost:4554 as a browser source, run another program that pulls livestream chat from a source and POSTS to localhost:4554/relay (like [twitching](https://github.com/thatpix3l/twitching) for Twitch chat).
 
 ## Where?
 
-Just on head over to the [releases](https://github.com/thatpix3l/picoplum/releases) section to acquire the latest executable for your platform.
+Just head on over to the [releases](https://github.com/thatpix3l/picoplum/releases) section and acquire the latest executable for your platform.

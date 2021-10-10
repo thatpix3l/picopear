@@ -1,4 +1,4 @@
-module picoplum
+module picopear
 
 go 1.17
 

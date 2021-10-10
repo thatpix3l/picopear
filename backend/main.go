@@ -18,7 +18,7 @@ var (
     embedRootFS embed.FS
     publicRootFS, _ = fs.Sub(embedRootFS, "public")
     chatChannel = make(chan []byte)
-    parser = argparse.NewParser("picoplum", "Fresh and tiny tool for aggregating livestream chats into a browser source")
+    parser = argparse.NewParser("picopear", "Fresh and tiny tool for aggregating livestream chats into a browser source")
 )
 
 func relayChatEndpoint(w http.ResponseWriter, req *http.Request) {
