@@ -22,6 +22,7 @@ var (
 )
 
 func relayChatEndpoint(w http.ResponseWriter, req *http.Request) {
+    // When POST with chat message json string, forward to chatChannel
     chatMsg, _ := io.ReadAll(req.Body)
     fmt.Println(string(chatMsg))
     chatChannel <- chatMsg
@@ -32,6 +33,7 @@ func mergedChatEndpoint() *sse.Server{
     
     go func() {
         for {
+            // Auto send live chat messages to subscribed clients
             s.SendMessage("/mergedchat", sse.SimpleMessage(string(<-chatChannel)))
         }
     }()
@@ -58,7 +60,7 @@ func setupRoutes() *http.ServeMux{
 
 func main() {
     // Build and parse cli arguments
-    listenPort := parser.String("p", "port", &argparse.Options{Required: false, Default: "4554", Help: "Port to bind, default is 4554"})
+    listenPort := parser.String("p", "port", &argparse.Options{Required: false, Default: "4554", Help: "Port to bind"})
     parser.Parse(os.Args)
 
     addr := fmt.Sprintf(":%s", *listenPort)
