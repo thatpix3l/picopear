@@ -2,5 +2,6 @@ frontend/node_modules/
 frontend/public/build/
 frontend/public/config.json
 backend/public
+backend/build
 
 .DS_Store
